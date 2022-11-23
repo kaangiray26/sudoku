@@ -1,6 +1,6 @@
 <template>
-    <div class="row vh-100 vw-100 d-flex flex-column justify-content-center align-items-center g-0 py-2">
-        <div class="col mh-100 d-flex col-11 col-sm-11 col-md-10 col-lg-6 col-xl-6 col-xxl-6 justify-content-center">
+    <div class="row h-100 w-100 d-flex flex-column justify-content-center align-items-center g-0 p-2">
+        <div class="col mh-100 d-flex col-12 col-sm-12 col-md-10 col-lg-6 col-xl-6 col-xxl-6 justify-content-center">
             <div class="card d-flex flex-fill border-dark shadow-lg p-2 rounded-3">
                 <div class="card-body mh-100 d-flex flex-column">
                     <img class="img-fluid mb-2" src="/assets/favicon.svg" />
@@ -31,10 +31,8 @@ const singleplayer = ref(null);
 const multiplayer = ref(null);
 
 async function start_game() {
-    console.log(singleplayer.value.checked);
-    console.log(multiplayer.value.checked);
     if (singleplayer.value.checked) {
-        router.push('/puzzle/singleplayer');
+        router.push('/singleplayer');
     } else if (multiplayer.value.checked) {
         router.push('/puzzle/multiplayer');
     }

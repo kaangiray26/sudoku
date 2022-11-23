@@ -9,6 +9,7 @@ const path = require('path')
 export default defineConfig({
     root: path.resolve(__dirname, 'src'),
     server: {
+        host: '192.168.178.20',
         port: 8000,
         hot: true,
     },
@@ -17,6 +18,7 @@ export default defineConfig({
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
             '~bootstrap': path.resolve(__dirname, 'node_modules/bootstrap'),
+            'hammerjs': path.resolve(__dirname, 'node_modules/hammerjs'),
         }
     }
 })

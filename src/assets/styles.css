@@ -64,6 +64,35 @@ body {
     border-color: black;
 }
 
+.context-block {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+
+    border-style: solid;
+    border-width: 1.5px;
+    border-color: black;
+}
+
 .selected-cell {
     background-color: lightblue;
+}
+
+.keypress-dark {
+    --bs-border-opacity: 1;
+    border: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
+    border-color: rgba(var(--bs-dark-rgb), var(--bs-border-opacity)) !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+    border-radius: var(--bs-border-radius) !important;
+    margin-left: 0.15rem !important;
+    margin-right: 0.15rem !important;
+}
+
+#contextMenu {
+    position: absolute;
+    z-index: 1031;
+    opacity: 0.95;
 }

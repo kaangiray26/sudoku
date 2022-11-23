@@ -1,7 +1,8 @@
 <template>
-    <div class="card d-flex flex-fill border-dark shadow-lg p-2 m-1 rounded-3">
-        <div class="card-body d-flex flex-column justify-content-center p-0">
-            <div class="ratio ratio-1x1">
+    <div class="card mh-100 d-flex flex-fill border-dark shadow-lg rounded-3 p-1"
+        style="position: relative;z-index: 0;">
+        <div class="card-body mh-100 d-flex flex-column justify-content-center">
+            <div ref="thisObj" class="ratio ratio-1x1">
                 <div class="sudoku-puzzle rounded" v-if="sudoku_loaded">
                     <div class="sudoku-block" v-for="(n, i) in 9">
                         <div class="sudoku-cell border d-flex justify-content-center clickable" v-for="(n, j) in 9">
@@ -13,27 +14,36 @@
                     </div>
                 </div>
             </div>
-            <div class="btn-group my-2">
-                <button class="btn btn-outline-primary" @click="reset">Reset</button>
-            </div>
         </div>
     </div>
+    <Context ref="thisContext" @press="insert_key" />
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
+import Context from "/components/Context.vue";
+
 import { generate } from "/js/generator.js";
 import { det_cell_x, det_cell_y } from "/js/helper.js";
+import Hammer from "hammerjs";
+
+const emit = defineEmits(['options']);
 
 var arr = null;
 const grid = ref(null);
 const genesis = ref(null);
 
+const device = ref(null);
+
+const moves = ref([]);
+
 const sudoku_loaded = ref(false);
 const selected_cell = ref(null);
-const output = ref('');
+
+let thisObj = ref(null);
+let thisContext = ref(null);
 
 async function reset() {
-    window.location.reload();
+    grid.value = JSON.parse(JSON.stringify(genesis.value));
 }
 
 async function select_cell(ev) {
@@ -41,32 +51,95 @@ async function select_cell(ev) {
     // console.log(ev.target.currentSrc.split(".svg")[0].slice(-1));
 }
 
-async function click_event(ev) {
-    if (!ev.target.classList.contains("cell")) {
-        selected_cell.value = null;
-    }
-}
 
-async function key_event(ev) {
-    if (!selected_cell.value) {
+async function insert_key(key) {
+    let i = parseInt(selected_cell.value[0]);
+    let j = parseInt(selected_cell.value[1]);
+
+    let row = det_cell_x(i, j);
+    let col = det_cell_y(i, j);
+
+    // Check if the cell is editable
+    if (genesis.value[row][col] != 0) {
         return;
     }
 
-    if (49 <= ev.keyCode <= 57) {
-        let i = parseInt(selected_cell.value[0]);
-        let j = parseInt(selected_cell.value[1]);
-        grid.value[det_cell_x(i, j)][det_cell_y(i, j)] = ev.keyCode - 48;
+    grid.value[row][col] = key;
+    moves.value.push([row, col]);
+    selected_cell.value = null;
+}
+
+// For mobile devices
+async function click_event(ev) {
+    if (!ev.target.classList.contains("cell")) {
         selected_cell.value = null;
+        thisContext.value.hide();
+        return;
+    }
+
+    if (device.value == "mobile") {
+        thisContext.value.show(ev);
+        return;
     }
 }
 
+// For desktop
+async function key_event(ev) {
+    if (!selected_cell.value) {
+        shortcuts(ev);
+        return;
+    }
+
+    if (ev.key == "Backspace") {
+        insert_key(0);
+        return;
+    }
+
+    if (49 <= ev.keyCode && ev.keyCode <= 57) {
+        insert_key(ev.keyCode - 48);
+        return;
+    }
+
+}
+
+async function shortcuts(ev) {
+    console.log(ev);
+    if (ev.key == "Backspace") {
+        if (moves.value.length) {
+            let last_move = moves.value.pop();
+            grid.value[last_move[0]][last_move[1]] = 0;
+        }
+        return;
+    }
+
+    if (ev.key == "h") {
+        emit('options');
+    }
+}
+
+defineExpose({
+    reset,
+});
+
 onMounted(() => {
-    arr = generate();
-    genesis.value = JSON.parse(JSON.stringify(arr));
-    grid.value = JSON.parse(JSON.stringify(arr));
+    var hammertime = new Hammer(thisObj.value);
+    hammertime.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
+    hammertime.on("swipeup", function () {
+        emit('options');
+    });
 
     window.addEventListener("click", click_event);
     window.addEventListener("keyup", key_event);
+
+    if (navigator.userAgent.toLowerCase().includes("mobile")) {
+        device.value = "mobile";
+    } else {
+        device.value = "desktop";
+    }
+
+    arr = generate();
+    genesis.value = JSON.parse(JSON.stringify(arr));
+    grid.value = JSON.parse(JSON.stringify(arr));
     sudoku_loaded.value = true;
 });
 </script>

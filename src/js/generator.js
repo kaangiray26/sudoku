@@ -11,7 +11,7 @@ function generate() {
     }
 
     backtrack(grid);
-    remove_cells(grid, 20);
+    remove_cells(grid, 26);
     return grid;
 }
 
