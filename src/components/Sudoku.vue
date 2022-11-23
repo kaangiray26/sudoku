@@ -6,7 +6,7 @@
                     <div class="sudoku-block" v-for="(n, i) in 9">
                         <div class="sudoku-cell border d-flex justify-content-center clickable" v-for="(n, j) in 9">
                             <img class="img-fluid cell"
-                                :src="'/assets/numbers/' + grid[det_cell_x(i, j)][det_cell_y(i, j)] + '.svg'"
+                                :src="'/numbers/' + grid[det_cell_x(i, j)][det_cell_y(i, j)] + '.svg'"
                                 :class="{ 'selected-cell': selected_cell == String(i).concat(j) }" @click="select_cell"
                                 :pos="String(i).concat(j)">
                         </div>
