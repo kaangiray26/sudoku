@@ -111,3 +111,7 @@ body {
     animation-name: glow_animation;
     animation-duration: 3s;
 }
+
+.right-0 {
+    right: 0;
+}
