@@ -96,3 +96,18 @@ body {
     z-index: 1031;
     opacity: 0.95;
 }
+
+@keyframes glow_animation {
+    from {
+        background-color: lightcoral;
+    }
+
+    to {
+        background-color: white;
+    }
+}
+
+.glow {
+    animation-name: glow_animation;
+    animation-duration: 3s;
+}

@@ -8,8 +8,8 @@
                         <div class="sudoku-cell border d-flex justify-content-center clickable" v-for="(n, j) in 9">
                             <img class="img-fluid cell"
                                 :src="'/numbers/' + grid[det_cell_x(i, j)][det_cell_y(i, j)] + '.svg'"
-                                :class="{ 'selected-cell': selected_cell == String(i).concat(j) }" @click="select_cell"
-                                :pos="String(i).concat(j)">
+                                :class="{ 'selected-cell': selected_cell == String(i).concat(j), 'glow': changed.includes(String(i).concat(j)) }"
+                                @click="select_cell" :pos="String(i).concat(j)">
                         </div>
                     </div>
                 </div>
@@ -28,21 +28,22 @@ import { get_solution } from "/js/stepsolver.js";
 import { det_cell_x, det_cell_y } from "/js/helper.js";
 import Hammer from "hammerjs";
 
-const emit = defineEmits(['options']);
+const emit = defineEmits(['options', 'loaded', 'write', 'erase']);
 
-var arr = null;
 const grid = ref(null);
 const genesis = ref(null);
 
 const device = ref(null);
 
 const moves = ref([]);
+const changed = ref([]);
 
 const sudoku_loaded = ref(false);
 const selected_cell = ref(null);
 
 let thisObj = ref(null);
 let thisContext = ref(null);
+
 
 async function reset() {
     grid.value = JSON.parse(JSON.stringify(genesis.value));
@@ -76,6 +77,7 @@ async function insert_key(key) {
     grid.value[row][col] = key;
     moves.value.push([row, col]);
     selected_cell.value = null;
+    emit('write', [i, j, key]);
 }
 
 // For mobile devices
@@ -117,6 +119,7 @@ async function shortcuts(ev) {
         if (moves.value.length) {
             let last_move = moves.value.pop();
             grid.value[last_move[0]][last_move[1]] = 0;
+            emit('write', [last_move[0], last_move[1], 0]);
         }
         return;
     }
@@ -127,9 +130,29 @@ async function shortcuts(ev) {
     }
 }
 
+function get_grid() {
+    return grid.value;
+}
+
+function set_grid(board) {
+    genesis.value = JSON.parse(JSON.stringify(board));
+    grid.value = JSON.parse(JSON.stringify(board));
+}
+
+async function write(i, j, key) {
+    let row = det_cell_x(i, j);
+    let col = det_cell_y(i, j);
+
+    changed.value.push(String(i).concat(j));
+    grid.value[row][col] = key;
+}
+
 defineExpose({
     reset,
-    solve
+    solve,
+    get_grid,
+    set_grid,
+    write
 });
 
 onMounted(() => {
@@ -148,9 +171,10 @@ onMounted(() => {
         device.value = "desktop";
     }
 
-    arr = generate();
+    let arr = generate();
     genesis.value = JSON.parse(JSON.stringify(arr));
     grid.value = JSON.parse(JSON.stringify(arr));
+    emit('loaded');
     sudoku_loaded.value = true;
 });
 </script>

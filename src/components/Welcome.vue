@@ -34,7 +34,7 @@ async function start_game() {
     if (singleplayer.value.checked) {
         router.push('/singleplayer');
     } else if (multiplayer.value.checked) {
-        router.push('/hub');
+        router.push('/multiplayer');
     }
     return;
 }
