@@ -16,7 +16,7 @@
                 <div class="btn-group m-1" role="group" aria-label="Basic example">
                     <button type="button" class="btn btn-outline-primary" @click="emit('press', 0)">Erase</button>
                     <button type="button" class="btn btn-outline-primary" @click="hide">Close</button>
-                    <button type="button" class="btn btn-outline-primary">Right</button>
+                    <button type="button" class="btn btn-outline-primary">Note</button>
                 </div>
             </li>
         </ul>

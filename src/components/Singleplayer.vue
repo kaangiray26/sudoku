@@ -9,18 +9,14 @@
             </div>
         </div>
     </div>
-    <OptionsModal @reset="thisSudokuObj.reset()" ref="thisOptionsModal" />
+    <OptionsModal @reset="thisSudokuObj.reset()" @solve="thisSudokuObj.solve()" ref="thisOptionsModal" />
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import Sudoku from '/components/Sudoku.vue';
 import OptionsModal from '/components/SingleplayerOptions.vue';
 
 let thisOptionsModal = ref(null);
 let thisSudokuObj = ref(null);
-
-async function keypress(ev) {
-    console.log(ev);
-}
 </script>

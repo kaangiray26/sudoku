@@ -23,6 +23,8 @@ import { ref, onMounted } from "vue";
 import Context from "/components/Context.vue";
 
 import { generate } from "/js/generator.js";
+import { get_solution } from "/js/stepsolver.js";
+
 import { det_cell_x, det_cell_y } from "/js/helper.js";
 import Hammer from "hammerjs";
 
@@ -46,9 +48,16 @@ async function reset() {
     grid.value = JSON.parse(JSON.stringify(genesis.value));
 }
 
+async function solve() {
+    let start = new Date().getTime();
+    get_solution(grid.value);
+    let end = new Date().getTime();
+    console.log("> Steps:", history.length);
+    console.log("> Solved in " + (end - start) + "ms.");
+}
+
 async function select_cell(ev) {
     selected_cell.value = ev.target.attributes.pos.value;
-    // console.log(ev.target.currentSrc.split(".svg")[0].slice(-1));
 }
 
 
@@ -102,8 +111,8 @@ async function key_event(ev) {
 
 }
 
+// Keyboard Shortcuts for desktop
 async function shortcuts(ev) {
-    console.log(ev);
     if (ev.key == "Backspace") {
         if (moves.value.length) {
             let last_move = moves.value.pop();
@@ -114,11 +123,13 @@ async function shortcuts(ev) {
 
     if (ev.key == "h") {
         emit('options');
+        return;
     }
 }
 
 defineExpose({
     reset,
+    solve
 });
 
 onMounted(() => {

@@ -7,6 +7,7 @@
         <div class="offcanvas-body d-flex justify-content-center">
             <div class="btn-group-vertical flex-fill" role="group" aria-label="Basic example">
                 <button type="button" class="btn btn-outline-dark" @click="new_sudoku">New Sudoku</button>
+                <button type="button" class="btn btn-outline-dark" @click="solve">Solve</button>
                 <button type="button" class="btn btn-outline-dark" @click="reset">Reset</button>
                 <button type="button" class="btn btn-outline-dark" @click="exit">Go Home</button>
             </div>
@@ -20,7 +21,7 @@ import { Offcanvas } from 'bootstrap';
 import { useRouter } from 'vue-router'
 
 const router = useRouter();
-const emit = defineEmits(['reset']);
+const emit = defineEmits(['reset', 'solve']);
 
 let objEle = ref(null);
 let thisModalObj = null;
@@ -46,6 +47,11 @@ async function reset() {
 async function new_sudoku() {
     thisModalObj.hide();
     router.go('/singleplayer');
+}
+
+async function solve() {
+    emit('solve');
+    thisModalObj.hide();
 }
 
 defineExpose({
