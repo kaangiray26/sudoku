@@ -17,12 +17,14 @@
                 <button class="btn btn-outline-primary" @click="solve">Solve</button>
                 <button class="btn btn-outline-primary" @click="reset">Reset</button>
             </div>
+            <div class="d-flex justify-content-start">
+                <span class="text-primary">{{ output }}</span>
+            </div>
         </div>
     </div>
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
-import { routerKey } from "vue-router";
 import { generate } from "/js/generator.js";
 import { det_cell_x, det_cell_y } from "/js/helper.js";
 import { backtrack } from "/js/solver.js";
@@ -33,13 +35,31 @@ const genesis = ref(null);
 
 const sudoku_loaded = ref(false);
 const selected_cell = ref(null);
+const output = ref(null);
 
 async function solve() {
     console.log("Solving...");
     let start = new Date().getTime();
-    grid.value = backtrack(arr);
+    let history = backtrack(arr);
     let end = new Date().getTime();
-    console.log("Solved in " + (end - start) + "ms");
+    output.value = "> Solved in " + (end - start) + "ms.";
+
+    history.forEach(function (obj, index, collection) {
+        setTimeout(function () {
+            do_op(obj);
+        }, index * 10);
+    });
+
+}
+
+function do_op(obj) {
+    if (obj.op == "add") {
+        grid.value[obj.row][obj.col] = obj.val;
+        return;
+    } else if (obj.op == "remove") {
+        grid.value[obj.row][obj.col] = 0;
+        return;
+    }
 }
 
 async function reset() {

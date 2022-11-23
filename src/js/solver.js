@@ -3,6 +3,7 @@ import { get_row, get_col, get_block } from "/js/helper.js";
 
 let moves = [];
 let board = [];
+let history = [];
 
 function backtrack(grid) {
     moves = [];
@@ -22,7 +23,8 @@ function backtrack(grid) {
             tryout(i, j);
         }
     }
-    return board;
+    return history;
+    // return board;
 }
 
 function tryout(row, col) {
@@ -38,8 +40,19 @@ function decide(arr, row, col) {
             "col": col,
             "opt": arr,
         });
+        history.push({
+            "op": "add",
+            "row": row,
+            "col": col,
+            "val": arr[0],
+        });
     } else {
         let last = moves.pop();
+        history.push({
+            "op": "remove",
+            "row": row,
+            "col": col,
+        });
         board[last.row][last.col] = 0;
         decide(last.opt.slice(1), last.row, last.col);
         decide(find_candidates(row, col), row, col);
